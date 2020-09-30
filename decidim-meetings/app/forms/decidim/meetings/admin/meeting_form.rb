@@ -17,18 +17,35 @@ module Decidim
         attribute :decidim_category_id, Integer
         attribute :private_meeting, Boolean
         attribute :transparent, Boolean
+        attribute :available_slots, Integer, default: 0
+        attribute :online_meeting_link, String
+        attribute :registration_type, String
+        attribute :type_of_meeting, String
+        attribute :external_registration_system_link, String
+        attribute :terms_and_conditions, Boolean
+
+        TYPE_OF_MEETING = %w(in_person online).freeze
+        REGISTRATION_TYPE = %w(registration_disabled on_this_platform another_registration_system).freeze
 
         translatable_attribute :title, String
         translatable_attribute :description, String
         translatable_attribute :location, String
         translatable_attribute :location_hints, String
+        translatable_attribute :registration_terms, String
 
         validates :title, translatable_presence: true
         validates :description, translatable_presence: true
-        validates :location, translatable_presence: true
+        validates :type_of_meeting, presence: true
+        validates :registration_type, presence: true
+        validates :location, translatable_presence: true, if: ->(form) { form.in_person_meeting? }
+        validates :registration_terms, translatable_presence: true, presence: true, if: ->(form) { form.registration_type == "on_this_platform" }
+        validates :available_slots, numericality: { greater_than_or_equal_to: 0 }, if: ->(form) { form.registration_type == "on_this_platform" }
+        validates :external_registration_system_link, presence: true, if: ->(form) { form.registration_type == "another_registration_system" }
+        validates :terms_and_conditions, presence: true
 
-        validates :address, presence: true
-        validates :address, geocoding: true, if: ->(form) { form.has_address? && !form.geocoded? }
+      validates :address, presence: true, if: ->(form) { form.needs_address? }
+      validates :address, geocoding: true, if: ->(form) { form.has_address? && !form.geocoded? && form.needs_address? }
+      validates :online_meeting_link, presence: true, if: ->(form) { form.online_meeting? }
         validates :start_time, presence: true, date: { before: :end_time }
         validates :end_time, presence: true, date: { after: :start_time }
 
@@ -89,8 +106,38 @@ module Decidim
           geocoding_enabled? && address.present?
         end
 
+        def needs_address?
+          in_person_meeting?
+        end
+
         def geocoded?
           latitude.present? && longitude.present?
+        end
+
+        def online_meeting?
+          type_of_meeting == "online"
+        end
+
+        def in_person_meeting?
+          type_of_meeting == "in_person"
+        end
+
+        def type_of_meeting_select
+          TYPE_OF_MEETING.map do |type|
+            [
+              I18n.t("type_of_meeting.#{type}", scope: "decidim.meetings"),
+              type
+            ]
+          end
+        end
+
+        def registration_type_select
+          REGISTRATION_TYPE.map do |type|
+            [
+              I18n.t("registration_type.#{type}", scope: "decidim.meetings"),
+              type
+            ]
+          end
         end
       end
     end
