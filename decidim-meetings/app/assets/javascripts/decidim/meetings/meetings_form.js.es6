@@ -8,7 +8,6 @@
 
     const $form = $(".meetings_form");
     if ($form.length > 0) {
-
       const $meetingTypeOfMeeting = $form.find("#meeting_type_of_meeting");
       const $meetingOnlineMeetingLink = $form.find("#meeting_online_meeting_link")
       const $meetingLocation = $form.find("#location");
@@ -45,5 +44,5 @@
       toggleDependsOnSelect($meetingTypeOfMeeting, $meetingLocation, "in_person");
       toggleDependsOnSelect($meetingTypeOfMeeting, $meetingOnlineMeetingLink, "online");
     }
-  });
-})(window);
+  })
+}(window));
