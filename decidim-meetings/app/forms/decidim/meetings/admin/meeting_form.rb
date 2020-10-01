@@ -43,9 +43,9 @@ module Decidim
         validates :external_registration_system_link, presence: true, if: ->(form) { form.registration_type == "another_registration_system" }
         validates :terms_and_conditions, presence: true
 
-      validates :address, presence: true, if: ->(form) { form.needs_address? }
-      validates :address, geocoding: true, if: ->(form) { form.has_address? && !form.geocoded? && form.needs_address? }
-      validates :online_meeting_link, presence: true, if: ->(form) { form.online_meeting? }
+        validates :address, presence: true, if: ->(form) { form.needs_address? }
+        validates :address, geocoding: true, if: ->(form) { form.has_address? && !form.geocoded? && form.needs_address? }
+        validates :online_meeting_link, presence: true, if: ->(form) { form.online_meeting? }
         validates :start_time, presence: true, date: { before: :end_time }
         validates :end_time, presence: true, date: { after: :start_time }
 
