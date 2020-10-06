@@ -47,5 +47,5 @@
       toggleDependsOnSelect($meetingTypeOfMeeting, $meetingAddress, "in_person");
       toggleDependsOnSelect($meetingTypeOfMeeting, $meetingOnlineMeetingLink, "online");
     }
-  })
-}(window));
+  });
+})(window);
