@@ -106,8 +106,6 @@ module Decidim
         @step = :step_3
 
         @form = form_proposal_model
-
-        @form.attachment = form_attachment_new
       end
 
       def preview
@@ -269,15 +267,8 @@ module Decidim
         @form_presenter ||= present(@form, presenter_class: Decidim::Proposals::ProposalPresenter)
       end
 
-      def form_attachment_new
-        form(AttachmentForm).from_model(Attachment.new)
-      end
-
       def edit_form
-        form_attachment_model = form(AttachmentForm).from_model(@proposal.attachments.first)
         @form = form_proposal_model
-        @form.attachment = form_attachment_model
-        @form
       end
 
       def set_participatory_text

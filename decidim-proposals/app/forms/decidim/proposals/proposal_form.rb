@@ -14,7 +14,6 @@ module Decidim
       attribute :category_id, Integer
       attribute :scope_id, Integer
       attribute :has_address, Boolean
-      attribute :attachment, AttachmentForm
       attribute :suggested_hashtags, Array[String]
       attribute :photos, Array[String]
       attribute :add_photos, Array
